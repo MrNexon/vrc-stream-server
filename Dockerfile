@@ -4,7 +4,7 @@ ARG FFMPEG_VERSION=5.1
 
 ##############################
 # Build the NGINX-build image.
-FROM alpine:3.16.1 as build-nginx
+FROM --platform=linux/amd64 alpine:3.16.1 as build-nginx
 ARG NGINX_VERSION
 ARG NGINX_RTMP_VERSION
 ARG MAKEFLAGS="-j4"
@@ -58,7 +58,7 @@ RUN \
 
 ###############################
 # Build the FFmpeg-build image.
-FROM alpine:3.16.1 as build-ffmpeg
+FROM --platform=linux/amd64 alpine:3.16.1 as build-ffmpeg
 ARG FFMPEG_VERSION
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j4"
@@ -131,8 +131,7 @@ RUN rm -rf /var/cache/* /tmp/*
 
 ##########################
 # Build the release image.
-FROM alpine:3.16.1
-LABEL MAINTAINER Alfred Gutierrez <alf.g.jr@gmail.com>
+FROM --platform=linux/amd64 alpine:3.16.1
 
 # Set default ports.
 ENV HTTP_PORT 80
@@ -166,7 +165,6 @@ COPY --from=build-ffmpeg /usr/lib/libfdk-aac.so.2 /usr/lib/libfdk-aac.so.2
 ENV PATH "${PATH}:/usr/local/nginx/sbin"
 COPY nginx.conf /etc/nginx/nginx.conf.template
 RUN mkdir -p /opt/data && mkdir /www
-COPY static /www/static
 
 EXPOSE 1935
 EXPOSE 80
